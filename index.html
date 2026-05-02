@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#FF6B2B" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="3D Print Calc" />
+  <title>3D Print Cost Calculator</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="header-icon">⬡</div>
+        <div>
+          <h1>3D Print</h1>
+          <span class="header-sub">Cost Calculator</span>
+        </div>
+        <div class="final-badge" id="headerPrice">$0.00</div>
+      </div>
+    </header>
+
+    <!-- Scrollable content -->
+    <main class="app-body">
+
+      <!-- PRINT INFO -->
+      <section class="card" data-section="print">
+        <div class="card-header">
+          <span class="card-icon">🖨️</span>
+          <h2>Print Info</h2>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Job Name</label>
+            <input type="text" id="jobName" placeholder="My awesome print" />
+          </div>
+          <div class="field row-2">
+            <div>
+              <label>Print Time (hrs)</label>
+              <input type="number" id="printHours" value="2.5" min="0" step="0.5" />
+            </div>
+            <div>
+              <label>Extra (min)</label>
+              <input type="number" id="printMins" value="0" min="0" max="59" step="1" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Filament Used (g)</label>
+            <input type="number" id="filamentWeight" value="50" min="0" step="1" />
+          </div>
+        </div>
+      </section>
+
+      <!-- FILAMENT -->
+      <section class="card" data-section="filament">
+        <div class="card-header">
+          <span class="card-icon">🧵</span>
+          <h2>Filament</h2>
+          <span class="cost-badge" id="filamentCost">$0.00</span>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Filament Type</label>
+            <select id="filamentType">
+              <option>PLA</option>
+              <option>PETG</option>
+              <option>ASA</option>
+              <option>PC Blend</option>
+              <option>TPU</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field row-2">
+            <div>
+              <label>Spool Price ($)</label>
+              <input type="number" id="spoolPrice" value="25" min="0" step="0.5" />
+            </div>
+            <div>
+              <label>Spool Weight (g)</label>
+              <input type="number" id="spoolWeight" value="1000" min="1" step="50" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Markup (%)</label>
+            <div class="slider-row">
+              <input type="range" id="markupSlider" min="0" max="100" value="20" />
+              <span class="slider-val" id="markupVal">20%</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ELECTRICITY -->
+      <section class="card collapsible" data-section="electricity">
+        <div class="card-header toggle-header" onclick="toggleSection(this)">
+          <span class="card-icon">⚡</span>
+          <h2>Electricity</h2>
+          <span class="cost-badge" id="electricityCost">$0.00</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body collapsed">
+          <div class="field-group">
+            <div class="field row-2">
+              <div>
+                <label>Power (W)</label>
+                <input type="number" id="printerWatts" value="120" min="0" step="10" />
+              </div>
+              <div>
+                <label>Cost ($/kWh)</label>
+                <input type="number" id="energyCost" value="0.13" min="0" step="0.01" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LABOR -->
+      <section class="card collapsible" data-section="labor">
+        <div class="card-header toggle-header" onclick="toggleSection(this)">
+          <span class="card-icon">👷</span>
+          <h2>Labor</h2>
+          <span class="cost-badge" id="laborCost">$0.00</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body collapsed">
+          <div class="field-group">
+            <p class="sub-label">Print Preparation</p>
+            <div class="field row-2">
+              <div>
+                <label>Prep Time (min)</label>
+                <input type="number" id="prepTime" value="15" min="0" />
+              </div>
+              <div>
+                <label>Rate ($/hr)</label>
+                <input type="number" id="prepRate" value="20" min="0" />
+              </div>
+            </div>
+            <p class="sub-label">Post-Processing</p>
+            <div class="field row-2">
+              <div>
+                <label>Post Time (min)</label>
+                <input type="number" id="postTime" value="10" min="0" />
+              </div>
+              <div>
+                <label>Rate ($/hr)</label>
+                <input type="number" id="postRate" value="20" min="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MACHINE -->
+      <section class="card collapsible" data-section="machine">
+        <div class="card-header toggle-header" onclick="toggleSection(this)">
+          <span class="card-icon">🔧</span>
+          <h2>Machine & Upkeep</h2>
+          <span class="cost-badge" id="machineCost">$0.00</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body collapsed">
+          <div class="field-group">
+            <div class="field">
+              <label>Printer Cost ($)</label>
+              <input type="number" id="printerCost" value="800" min="0" step="50" />
+            </div>
+            <div class="field row-2">
+              <div>
+                <label>Return (years)</label>
+                <input type="number" id="returnYears" value="3" min="1" step="1" />
+              </div>
+              <div>
+                <label>Daily Use (hrs)</label>
+                <input type="number" id="dailyUse" value="6" min="1" max="24" step="0.5" />
+              </div>
+            </div>
+            <div class="field">
+              <label>Repair/Upkeep (%)</label>
+              <div class="slider-row">
+                <input type="range" id="repairSlider" min="0" max="30" value="5" />
+                <span class="slider-val" id="repairVal">5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- OTHER COSTS -->
+      <section class="card collapsible" data-section="other">
+        <div class="card-header toggle-header" onclick="toggleSection(this)">
+          <span class="card-icon">📦</span>
+          <h2>Other Costs</h2>
+          <span class="cost-badge" id="otherCost">$0.00</span>
+          <span class="chevron">▾</span>
+        </div>
+        <div class="card-body collapsed">
+          <div class="field-group" id="otherCostsList">
+            <div class="other-cost-row">
+              <input type="text" placeholder="e.g. Packaging" class="other-label" value="Packaging" />
+              <input type="number" class="other-amount" value="0.50" min="0" step="0.1" />
+            </div>
+            <div class="other-cost-row">
+              <input type="text" placeholder="e.g. Shipping" class="other-label" value="Shipping" />
+              <input type="number" class="other-amount" value="0" min="0" step="0.5" />
+            </div>
+          </div>
+          <button class="add-btn" onclick="addOtherCost()">+ Add Cost</button>
+        </div>
+      </section>
+
+      <!-- VAT -->
+      <section class="card" data-section="vat">
+        <div class="card-header">
+          <span class="card-icon">🧾</span>
+          <h2>VAT / Tax</h2>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Tax Rate (%)</label>
+            <div class="slider-row">
+              <input type="range" id="vatSlider" min="0" max="30" value="0" step="0.5" />
+              <span class="slider-val" id="vatVal">0%</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL PRICE -->
+      <section class="card final-card">
+        <div class="card-header">
+          <span class="card-icon">💰</span>
+          <h2>Final Price</h2>
+        </div>
+        <div class="breakdown">
+          <div class="breakdown-row"><span>Filament</span><span id="b-filament">$0.00</span></div>
+          <div class="breakdown-row"><span>Electricity</span><span id="b-electricity">$0.00</span></div>
+          <div class="breakdown-row"><span>Labor</span><span id="b-labor">$0.00</span></div>
+          <div class="breakdown-row"><span>Machine</span><span id="b-machine">$0.00</span></div>
+          <div class="breakdown-row"><span>Other</span><span id="b-other">$0.00</span></div>
+          <div class="breakdown-row subtotal"><span>Subtotal</span><span id="b-subtotal">$0.00</span></div>
+          <div class="breakdown-row"><span>VAT</span><span id="b-vat">$0.00</span></div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="bar-chart" id="barChart"></div>
+
+        <div class="total-box">
+          <span>TOTAL</span>
+          <span id="finalTotal">$0.00</span>
+        </div>
+
+        <div class="action-row">
+          <button class="action-btn" onclick="copyResult()">📋 Copy</button>
+          <button class="action-btn" onclick="resetAll()">🔄 Reset</button>
+        </div>
+      </section>
+
+      <div style="height: 2rem;"></div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast">Copied to clipboard!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
